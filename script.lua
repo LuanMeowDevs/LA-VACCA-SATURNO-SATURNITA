@@ -11209,7 +11209,7 @@ ScreenGui.ResetOnSpawn = false
 local Frame = Instance.new("Frame")
 Frame.Size = UDim2.new(0, 50, 0, 50)
 Frame.Position = UDim2.new(0.15, 0, 0.15, 0)
-Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Frame.BorderSizePixel = 0
 Frame.Parent = ScreenGui
 Frame.Active = true
@@ -11224,7 +11224,7 @@ local Image = Instance.new("ImageLabel")
 Image.Parent = Frame
 Image.AnchorPoint = Vector2.new(0.5, 0.5)
 Image.Position = UDim2.new(0.5, 0, 0.5, 0)
-Image.Size = UDim2.new(0, 80, 0, 80)
+Image.Size = UDim2.new(0, 40, 0, 40)
 Image.BackgroundTransparency = 1
 Image.Image = "rbxassetid://130364232574601"
 
