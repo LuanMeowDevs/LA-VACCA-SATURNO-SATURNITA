@@ -391,41 +391,38 @@ elseif game.PlaceId == 7449423635 or game.PlaceId == 100117331123089 then
 	World3 = true;
 end;
 -- ======================================================
--- [M3Ow SYSTEMS] Merged from M3Ow Hub V1
 -- ======================================================
 
--- SAVE SYSTEM (M3Ow)
-local _M3HttpService = game:GetService("HttpService")
-local _M3FolderName = "Saturn_M3Ow_Save"
-local _M3FileName = "Settings.json"
-local _M3FullPath = _M3FolderName .. "/" .. _M3FileName
-if makefolder and not isfolder(_M3FolderName) then makefolder(_M3FolderName) end
-M3SaveData = M3SaveData or {}
-function M3SaveSettings()
+local _SaveHttpService = game:GetService("HttpService")
+local _SaveFolderName = "Saturn_M3Ow_Save"
+local _SaveFileName = "Settings.json"
+local _SaveFullPath = _SaveFolderName .. "/" .. _SaveFileName
+if makefolder and not isfolder(_SaveFolderName) then makefolder(_SaveFolderName) end
+SaveData = SaveData or {}
+function SaveSettings()
     if not writefile then return false end
     pcall(function()
-        writefile(_M3FullPath, _M3HttpService:JSONEncode(M3SaveData))
+        writefile(_SaveFullPath, _SaveHttpService:JSONEncode(SaveData))
     end)
 end
-function M3LoadSettings()
-    if not (isfile and isfile(_M3FullPath)) then return end
+function LoadSettings()
+    if not (isfile and isfile(_SaveFullPath)) then return end
     local ok, res = pcall(function()
-        return _M3HttpService:JSONDecode(readfile(_M3FullPath))
+        return _SaveHttpService:JSONDecode(readfile(_SaveFullPath))
     end)
-    if ok and res then M3SaveData = res end
+    if ok and res then SaveData = res end
 end
-function M3GetSetting(name, default)
-    return M3SaveData[name] ~= nil and M3SaveData[name] or default
+function GetSetting(name, default)
+    return SaveData[name] ~= nil and SaveData[name] or default
 end
-M3LoadSettings()
+LoadSettings()
 
--- IMPROVED BRINGENEMY (TweenService-based, M3Ow)
-local _M3TweenService = game:GetService("TweenService")
-local _M3TweenInfoBring = TweenInfo.new(0.45, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-M3BringRange = M3BringRange or 235
-M3MaxBringMobs = M3MaxBringMobs or 3
+local _BringTweenService = game:GetService("TweenService")
+local _BringTweenInfo = TweenInfo.new(0.45, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+BringRange = BringRange or 235
+MaxBringMobs = MaxBringMobs or 3
 
-local function M3IsRaidMob(mob)
+local function IsRaidMob(mob)
     local n = mob.Name:lower()
     if n:find("raid") or n:find("microchip") or n:find("island") then return true end
     if mob:GetAttribute("IsRaid") or mob:GetAttribute("RaidMob") or mob:GetAttribute("IsBoss") then return true end
@@ -434,7 +431,7 @@ local function M3IsRaidMob(mob)
     return false
 end
 
-function M3BringEnemy(targetPos)
+function BringEnemy(targetPos)
     local char = game.Players.LocalPlayer.Character
     local hrp = char and char:FindFirstChild("HumanoidRootPart")
     if not hrp then return end
@@ -442,18 +439,18 @@ function M3BringEnemy(targetPos)
     local tPos = targetPos or hrp.Position
     local count = 0
     for _, mob in ipairs(workspace.Enemies:GetChildren()) do
-        if count >= M3MaxBringMobs then break end
+        if count >= MaxBringMobs then break end
         local hum = mob:FindFirstChild("Humanoid")
         local root = mob:FindFirstChild("HumanoidRootPart")
-        if hum and root and hum.Health > 0 and not M3IsRaidMob(mob) then
+        if hum and root and hum.Health > 0 and not IsRaidMob(mob) then
             local dist = (root.Position - tPos).Magnitude
-            if dist <= M3BringRange and not root:GetAttribute("M3Tweening") then
+            if dist <= BringRange and not root:GetAttribute("Tweening") then
                 count += 1
-                root:SetAttribute("M3Tweening", true)
-                local tween = _M3TweenService:Create(root, _M3TweenInfoBring, {CFrame = CFrame.new(tPos)})
+                root:SetAttribute("Tweening", true)
+                local tween = _BringTweenService:Create(root, _BringTweenInfo, {CFrame = CFrame.new(tPos)})
                 tween:Play()
                 tween.Completed:Once(function()
-                    if root then root:SetAttribute("M3Tweening", false) end
+                    if root then root:SetAttribute("Tweening", false) end
                 end)
             end
         end
@@ -461,10 +458,10 @@ function M3BringEnemy(targetPos)
 end
 
 -- AUTO BERRY
-M3AutoBerry = false
+AutoBerry = false
 spawn(function()
     while task.wait(0.1) do
-        if M3AutoBerry then
+        if AutoBerry then
             pcall(function()
                 local cs = game:GetService("CollectionService")
                 local tagged = cs:GetTagged("BerryBush")
@@ -482,15 +479,15 @@ spawn(function()
 end)
 
 -- AUTO ACTIVE CORES (Haki Colors)
-M3AutoActiveCores = false
-local function M3VaildColor(part)
+AutoActiveCores = false
+local function VaildColor(part)
     return part and part.BrickColor and tostring(part.BrickColor) == "Lime green"
 end
-local function M3HakiCalculate(part)
+local function HakiCalculate(part)
     local e = {["Really red"]="Pure Red", Oyster="Snow White", ["Hot pink"]="Winter Sky"}
     return part and part.BrickColor and e[tostring(part.BrickColor)]
 end
-local function M3AuraSkin(name)
+local function AuraSkin(name)
     pcall(function()
         local net = game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Net")
         net:WaitForChild("RF/FruitCustomizerRF"):InvokeServer({StorageName=name, Type="AuraSkin", Context="Equip"})
@@ -498,17 +495,17 @@ local function M3AuraSkin(name)
 end
 spawn(function()
     while task.wait(0.1) do
-        if M3AutoActiveCores then
+        if AutoActiveCores then
             pcall(function()
                 local summoner = workspace.Map["Boat Castle"]:FindFirstChild("Summoner")
                 if summoner and summoner:FindFirstChild("Circle") then
                     for _, e in pairs(summoner.Circle:GetChildren()) do
                         if e.Name == "Part" then
                             local inner = e:FindFirstChild("Part")
-                            if not M3VaildColor(inner) then
-                                local colorName = M3HakiCalculate(e)
+                            if not VaildColor(inner) then
+                                local colorName = HakiCalculate(e)
                                 if colorName then
-                                    M3AuraSkin(colorName)
+                                    AuraSkin(colorName)
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = e.CFrame
                                 end
                             end
@@ -520,11 +517,10 @@ spawn(function()
     end
 end)
 
--- SAFE MODE (M3Ow) - auto stop farm when hp low
-M3SafeMode = false
+SafeMode = false
 spawn(function()
     while task.wait(0.5) do
-        if M3SafeMode then
+        if SafeMode then
             pcall(function()
                 local char = game.Players.LocalPlayer.Character
                 local hum = char and char:FindFirstChild("Humanoid")
@@ -546,10 +542,10 @@ spawn(function()
 end)
 
 -- AUTO CITIZEN QUEST (Ken V2 - World 3)
-M3CitizenQuest = false
+CitizenQuest = false
 spawn(function()
     while task.wait(0.1) do
-        if M3CitizenQuest then
+        if CitizenQuest then
             pcall(function()
                 local plr = game.Players.LocalPlayer
                 local replicated = game:GetService("ReplicatedStorage")
@@ -591,14 +587,13 @@ spawn(function()
     end
 end)
 
--- AUTO FISHING (M3Ow - complete system)
-M3AutoFishing = false
-M3AutoBuyBait = false
-M3AutoFishingQuest = false
-M3AutoQuestComplete = false
-M3AutoSellFish = false
-M3SelectedBait = nil
-M3SelectedRod = nil
+AutoFishing = false
+AutoBuyBait = false
+AutoFishingQuest = false
+AutoQuestComplete = false
+AutoSellFish = false
+SelectedBait = nil
+SelectedRod = nil
 spawn(function()
     local RS = game:GetService("ReplicatedStorage")
     local function getFishingRemote()
@@ -618,11 +613,11 @@ spawn(function()
     end
     while task.wait(0.5) do
         pcall(function()
-            if M3AutoBuyBait and M3SelectedBait then
+            if AutoBuyBait and SelectedBait then
                 local craftRemote = getCraftRemote()
-                if craftRemote then craftRemote:InvokeServer("Craft", M3SelectedBait, {}) end
+                if craftRemote then craftRemote:InvokeServer("Craft", SelectedBait, {}) end
             end
-            if M3AutoFishingQuest then
+            if AutoFishingQuest then
                 local jobsRemote = getJobsRemote()
                 if jobsRemote then
                     local pGui = game.Players.LocalPlayer.PlayerGui
@@ -632,22 +627,22 @@ spawn(function()
                     end
                 end
             end
-            if M3AutoQuestComplete then
+            if AutoQuestComplete then
                 local jobsRemote = getJobsRemote()
                 if jobsRemote then jobsRemote:InvokeServer("FishingNPC", "FinishQuest") end
             end
-            if M3AutoSellFish then
+            if AutoSellFish then
                 local jobsRemote = getJobsRemote()
                 if jobsRemote then jobsRemote:InvokeServer("FishingNPC", "SellFish") end
             end
-            if M3AutoFishing then
+            if AutoFishing then
                 local plr = game.Players.LocalPlayer
                 local char = plr.Character or plr.CharacterAdded:Wait()
                 local hrp = char:FindFirstChild("HumanoidRootPart")
                 if not hrp then return end
                 local equippedTool = char:FindFirstChildOfClass("Tool")
-                if M3SelectedRod and (not equippedTool or equippedTool.Name ~= M3SelectedRod) then
-                    local rodInBag = plr.Backpack:FindFirstChild(M3SelectedRod)
+                if SelectedRod and (not equippedTool or equippedTool.Name ~= SelectedRod) then
+                    local rodInBag = plr.Backpack:FindFirstChild(SelectedRod)
                     if rodInBag then
                         char.Humanoid:EquipTool(rodInBag)
                         equippedTool = rodInBag
@@ -676,25 +671,23 @@ spawn(function()
     end
 end)
 
--- HAKI STATES (M3Ow)
-M3SelectStateHaki = "State 0"
-function M3ChangeHaki()
+SelectStateHaki = "State 0"
+function ChangeHaki()
     local replicated = game:GetService("ReplicatedStorage")
     local stageMap = {["State 0"]=0, ["State 1"]=1, ["State 2"]=2, ["State 3"]=3, ["State 4"]=4, ["State 5"]=5}
-    local stage = stageMap[M3SelectStateHaki]
+    local stage = stageMap[SelectStateHaki]
     if stage then
         replicated.Remotes.CommF_:InvokeServer("ChangeBusoStage", stage)
     end
 end
 
--- WALK ON WATER (M3Ow - controlled separately)
-M3WalkOnWater = false
+WalkOnWater_M3 = false
 spawn(function()
     while task.wait(0.1) do
         pcall(function()
             local waterBase = workspace.Map:FindFirstChild("WaterBase-Plane")
             if waterBase then
-                if M3WalkOnWater then
+                if WalkOnWater_M3 then
                     waterBase.Size = Vector3.new(1000, 112, 1000)
                 else
                     waterBase.Size = Vector3.new(1000, 80, 1000)
@@ -704,15 +697,14 @@ spawn(function()
     end
 end)
 
--- STRETCH SCREEN (M3Ow)
-M3StretchScreenActive = false
-function M3StretchScreen()
-    if M3StretchScreenActive then return end
-    M3StretchScreenActive = true
+StretchScreenActive = false
+function StretchScreen()
+    if StretchScreenActive then return end
+    StretchScreenActive = true
     local res = 0.65
     local Camera = workspace.CurrentCamera
     game:GetService("RunService").RenderStepped:Connect(function()
-        if M3StretchScreenActive then
+        if StretchScreenActive then
             pcall(function()
                 Camera.CFrame = Camera.CFrame * CFrame.new(0,0,0, 1,0,0, 0,res,0, 0,0,1)
             end)
@@ -720,7 +712,6 @@ function M3StretchScreen()
     end)
 end
 
--- ADVANCED FASTATTACK MODULE (M3Ow)
 spawn(function()
     local Players = game:GetService("Players")
     local Player = Players.LocalPlayer
@@ -733,13 +724,13 @@ spawn(function()
     local RegisterAttack = Net and SafeGet(Net, "RE/RegisterAttack")
     local RegisterHit = Net and SafeGet(Net, "RE/RegisterHit")
     if not RegisterAttack or not RegisterHit then return end
-    local M3FA = {Distance=100}
+    local FA = {Distance=100}
     local function ProcessM3Enemies(list, folder)
         local basePart = nil
         for _, enemy in ipairs(folder:GetChildren()) do
             local head = enemy:FindFirstChild("Head")
             if head and enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0
-            and Player:DistanceFromCharacter(head.Position) < M3FA.Distance
+            and Player:DistanceFromCharacter(head.Position) < FA.Distance
             and enemy ~= Player.Character then
                 table.insert(list, {enemy, head})
                 basePart = head
@@ -747,7 +738,7 @@ spawn(function()
         end
         return basePart
     end
-    local function M3AttackNearest()
+    local function AttackNearest()
         local enemies = {}
         local ef = workspace:FindFirstChild("Enemies")
         local cf = workspace:FindFirstChild("Characters")
@@ -768,21 +759,20 @@ spawn(function()
             pcall(function() RegisterAttack:FireServer(0) RegisterHit:FireServer(p1 or p2, enemies) end)
         end
     end
-    M3FastAttackActive = true
+    FastAttackActive = true
     while task.wait(0) do
-        if M3FastAttackActive then
+        if FastAttackActive then
             pcall(function()
                 local char = Player.Character
                 local hum = char and char:FindFirstChild("Humanoid")
                 if not hum or hum.Health <= 0 then return end
                 local tool = char:FindFirstChildOfClass("Tool")
-                if tool and tool.ToolTip ~= "Gun" then M3AttackNearest() end
+                if tool and tool.ToolTip ~= "Gun" then AttackNearest() end
             end)
         end
     end
 end)
 -- ======================================================
--- [END M3Ow BACKEND SYSTEMS]
 -- ======================================================
 
 function CheckQuest()
@@ -4784,16 +4774,15 @@ spawn(function()
 	end;
 end);
 
--- [M3Ow] Fishing System
 FishingSection = Tabs.OthersTab:Section({
-	Title = "Auto Fishing (M3Ow)",
+	Title = "Auto Fishing (OW)",
 	TextXAlignment = "Left"
 });
 FishingRodInput = Tabs.OthersTab:Input({
 	Title = "Nome da Vara de Pesca",
 	Placeholder = "ex: Fishing Rod",
 	Callback = function(val)
-		M3SelectedRod = val
+		SelectedRod = val
 	end
 });
 BaitDropdown = Tabs.OthersTab:Dropdown({
@@ -4802,7 +4791,7 @@ BaitDropdown = Tabs.OthersTab:Dropdown({
 	Default = "Basic Bait",
 	Multi = false,
 	Callback = function(val)
-		M3SelectedBait = val
+		SelectedBait = val
 	end
 });
 AutoBuyBaitToggle = Tabs.OthersTab:Toggle({
@@ -4810,7 +4799,7 @@ AutoBuyBaitToggle = Tabs.OthersTab:Toggle({
 	Desc = "Compra/crafta a isca selecionada",
 	Default = false,
 	Callback = function(state)
-		M3AutoBuyBait = state
+		AutoBuyBait = state
 	end
 });
 AutoFishingToggle = Tabs.OthersTab:Toggle({
@@ -4818,7 +4807,7 @@ AutoFishingToggle = Tabs.OthersTab:Toggle({
 	Desc = "Lanca e puxa a vara automaticamente",
 	Default = false,
 	Callback = function(state)
-		M3AutoFishing = state
+		AutoFishing = state
 	end
 });
 AutoQuestFishingToggle = Tabs.OthersTab:Toggle({
@@ -4826,7 +4815,7 @@ AutoQuestFishingToggle = Tabs.OthersTab:Toggle({
 	Desc = "Pega quest com o NPC Angler",
 	Default = false,
 	Callback = function(state)
-		M3AutoFishingQuest = state
+		AutoFishingQuest = state
 	end
 });
 AutoCompleteQuestFishingToggle = Tabs.OthersTab:Toggle({
@@ -4834,7 +4823,7 @@ AutoCompleteQuestFishingToggle = Tabs.OthersTab:Toggle({
 	Desc = "Entrega a quest automaticamente",
 	Default = false,
 	Callback = function(state)
-		M3AutoQuestComplete = state
+		AutoQuestComplete = state
 	end
 });
 AutoSellFishToggle = Tabs.OthersTab:Toggle({
@@ -4842,11 +4831,10 @@ AutoSellFishToggle = Tabs.OthersTab:Toggle({
 	Desc = "Vende os peixes automaticamente",
 	Default = false,
 	Callback = function(state)
-		M3AutoSellFish = state
+		AutoSellFish = state
 	end
 });
 
--- [M3Ow] Citizen Quest (Ken V2 - Sea 3 Only)
 CitizenQuestSection = Tabs.OthersTab:Section({
 	Title = "Citizen Quest / Ken V2 (Sea 3)",
 	TextXAlignment = "Left"
@@ -4856,7 +4844,7 @@ CitizenQuestToggle = Tabs.OthersTab:Toggle({
 	Desc = "Completa automaticamente o quest do cidadao (Ken V2)",
 	Default = false,
 	Callback = function(state)
-		M3CitizenQuest = state
+		CitizenQuest = state
 	end
 });
 
@@ -4993,9 +4981,8 @@ spawn(function()
 	end);
 end);
 
--- [M3Ow] Extra Settings
-M3OthersSection = Tabs.SettingsTab:Section({
-	Title = "M3Ow Extras",
+OthersSection = Tabs.SettingsTab:Section({
+	Title = "OW Extras",
 	TextXAlignment = "Left"
 });
 HakiStatesDropdown = Tabs.SettingsTab:Dropdown({
@@ -5005,13 +4992,13 @@ HakiStatesDropdown = Tabs.SettingsTab:Dropdown({
 	Default = "State 0",
 	Multi = false,
 	Callback = function(val)
-		M3SelectStateHaki = val
+		SelectStateHaki = val
 	end
 });
 ChangeHakiButton = Tabs.SettingsTab:Button({
 	Title = "Change Haki Stage",
 	Callback = function()
-		M3ChangeHaki()
+		ChangeHaki()
 	end
 });
 SafeModeToggle = Tabs.SettingsTab:Toggle({
@@ -5019,7 +5006,7 @@ SafeModeToggle = Tabs.SettingsTab:Toggle({
 	Desc = "Para o farm automaticamente quando HP < 30%",
 	Default = false,
 	Callback = function(state)
-		M3SafeMode = state
+		SafeMode = state
 	end
 });
 AutoActiveCoresToggle = Tabs.SettingsTab:Toggle({
@@ -5027,15 +5014,15 @@ AutoActiveCoresToggle = Tabs.SettingsTab:Toggle({
 	Desc = "Ativa os cores do haki no Boat Castle automaticamente",
 	Default = false,
 	Callback = function(state)
-		M3AutoActiveCores = state
+		AutoActiveCores = state
 	end
 });
-M3FastAttackToggle = Tabs.SettingsTab:Toggle({
-	Title = "M3Ow Fast Attack (Advanced)",
+FastAttackToggle = Tabs.SettingsTab:Toggle({
+	Title = "OW Fast Attack (Advanced)",
 	Desc = "Sistema de fast attack avancado com RegisterHit",
 	Default = true,
 	Callback = function(state)
-		M3FastAttackActive = state
+		FastAttackActive = state
 	end
 });
 GraphicSettingSection = Tabs.SettingsTab:Section({
@@ -7610,9 +7597,8 @@ BuySanguineArtButton = Tabs.ShopTab:Button({
 	end
 });
 
--- [M3Ow] Sword Buying (extended)
 SwordBuyM3Section = Tabs.ShopTab:Section({
-	Title = "Buy Swords (M3Ow)",
+	Title = "Buy Swords (OW)",
 	TextXAlignment = "Left"
 });
 BuyPipeButton = Tabs.ShopTab:Button({
@@ -7639,9 +7625,8 @@ BuyPoleV2Button = Tabs.ShopTab:Button({
 		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("ThunderGodTalk")
 	end
 });
--- [M3Ow] Gun Buying
 GunBuyM3Section = Tabs.ShopTab:Section({
-	Title = "Buy Guns (M3Ow)",
+	Title = "Buy Guns (OW)",
 	TextXAlignment = "Left"
 });
 BuySlinghotButton = Tabs.ShopTab:Button({
@@ -7682,9 +7667,8 @@ BuyBizarreRifleButton = Tabs.ShopTab:Button({
 		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Ectoplasm","Buy",1)
 	end
 });
--- [M3Ow] Misc Shop
 MiscShopM3Section = Tabs.ShopTab:Section({
-	Title = "Misc Shop (M3Ow)",
+	Title = "Misc Shop (OW)",
 	TextXAlignment = "Left"
 });
 BuyRefundStatButton = Tabs.ShopTab:Button({
@@ -10447,7 +10431,6 @@ RemoveLavaButton = Tabs.MiscTab:Button({
 	end
 });
 
--- [M3Ow] Misc additions
 StretchScreenSection = Tabs.MiscTab:Section({
 	Title = "Screen",
 	TextXAlignment = "Left"
@@ -10456,21 +10439,19 @@ StretchScreenButton = Tabs.MiscTab:Button({
 	Title = "Stretch Screen",
 	Desc = "Altera o aspect ratio da camera",
 	Callback = function()
-		M3StretchScreen()
+		StretchScreen()
 	end
 });
 
--- [M3Ow] Walk On Water (M3Ow method - WaterBase resize)
-M3WalkOnWaterToggle = Tabs.MiscTab:Toggle({
-	Title = "Walk On Water (M3Ow)",
+WalkOnWaterM3Toggle = Tabs.MiscTab:Toggle({
+	Title = "Walk On Water (OW)",
 	Desc = "Redimensiona o WaterBase para andar na agua (metodo alternativo)",
 	Default = false,
 	Callback = function(state)
-		M3WalkOnWater = state
+		WalkOnWater_M3 = state
 	end
 });
 
--- [M3Ow] Auto Berry
 AutoBerrySection = Tabs.MiscTab:Section({
 	Title = "Berry",
 	TextXAlignment = "Left"
@@ -10480,7 +10461,7 @@ AutoBerryToggle = Tabs.MiscTab:Toggle({
 	Desc = "Coleta berries automaticamente",
 	Default = false,
 	Callback = function(state)
-		M3AutoBerry = state
+		AutoBerry = state
 	end
 });
 ServerTabSection = Tabs.ServerTab:Section({
@@ -10640,9 +10621,8 @@ spawn(function()
 	end;
 end);
 
--- [M3Ow] Extra Status Paragraphs
-M3StatusSection = Tabs.ServerTab:Section({
-	Title = "M3Ow Status",
+StatusSection = Tabs.ServerTab:Section({
+	Title = "OW Status",
 	TextXAlignment = "Left"
 });
 EliteHunterProgressParagraph = Tabs.ServerTab:Paragraph({
