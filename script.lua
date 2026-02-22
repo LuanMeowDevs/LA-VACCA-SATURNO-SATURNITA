@@ -1,11 +1,12 @@
-local WindUI = (loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua")))();
+local WindUI = (loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/download/2.3.0/main.lua")))();
 local Window = WindUI:CreateWindow({
     Title = "🪐Saturn Hub🪐",
     Author = "By 1x1x1x1x1x1 And David Baszucki",
     Folder = "Saturn Gen3",
     Size = UDim2.fromOffset(520, 300),
     Transparent = true,
-    Theme = "Dark",
+    Theme = "Default",
+    Accent = Color3.fromRGB(255, 140, 0),
     SideBarWidth = 190,
     HasOutline = false,
 });
@@ -10092,4 +10093,3 @@ spawn(function()
 		end);
 	end;
 end);
-
