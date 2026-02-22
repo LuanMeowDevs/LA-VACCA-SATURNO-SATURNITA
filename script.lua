@@ -1,11 +1,16 @@
-local WindUI = (loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/download/1.6.41/main.lua")))();
+local WindUI = (loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua")))();
+pcall(function()
+	for _, t in pairs(WindUI:GetThemes()) do
+		print("WINDUI THEME: " .. tostring(t));
+	end;
+end);
 local Window = WindUI:CreateWindow({
     Title = "☄️Eclipse Hub☄️",
     Author = "By 1x1x1x1x1x1 And David Baszucki",
     Folder = "Eclipse Lunar Gen4",
     Size = UDim2.fromOffset(520, 300),
     Transparent = true,
-    Theme = "Macchiato",
+    Theme = "Dark",
     SideBarWidth = 190,
     HasOutline = false,
 });
@@ -17,78 +22,97 @@ Window:EditOpenButton({
 local Tabs = {
 	MainTab = Window:Tab({
 		Title = "Main",
+		Icon = "house",
 		Desc = "Main Section"
 	}),
 	OthersTab = Window:Tab({
 		Title = "Others",
+		Icon = "inbox",
 		Desc = "Farming Section"
 	}),
 	ItemsTab = Window:Tab({
 		Title = "Items",
+		Icon = "box",
 		Desc = "Items Section"
 	}),
 	FruitTab = Window:Tab({
 		Title = "Fruit",
+		Icon = "vegan",
 		Desc = "Fruit Section"
 	}),
 	RaidTab = Window:Tab({
 		Title = "Raid",
+		Icon = "door-open",
 		Desc = "Raid Section"
 	}),
 	CombatTab = Window:Tab({
 		Title = "Combat",
+		Icon = "sword",
 		Desc = "Combat Section"
 	}),
 	RaceTab = Window:Tab({
 		Title = "Race",
+		Icon = "bot",
 		Desc = "Race Section"
 	}),
 	DragonDojoTab = Window:Tab({
 		Title = "Dragon Dojo",
+		Icon = "shield",
 		Desc = "Dragon Dojo Section"
 	}),
 	SeaEventTab = Window:Tab({
 		Title = "Sea Event",
+		Icon = "anchor",
 		Desc = "Sea Event Section"
 	}),
 	SeaStackTab = Window:Tab({
 		Title = "Sea Stack",
+		Icon = "waves",
 		Desc = "Sea Stack Section"
 	}),
 	EspTab = Window:Tab({
 		Title = "Esp",
+		Icon = "scan-eye",
 		Desc = "Esp Section"
 	}),
 	TeleportTab = Window:Tab({
 		Title = "Teleport",
+		Icon = "map-pinned",
 		Desc = "Teleport Section"
 	}),
 	LocalPlayerTab = Window:Tab({
 		Title = "Local Player",
+		Icon = "user",
 		Desc = "Local Player Section"
 	}),
 	StatsTab = Window:Tab({
 		Title = "Stats",
+		Icon = "chart-no-axes-column",
 		Desc = "Stats Section"
 	}),
 	SettingsTab = Window:Tab({
 		Title = "Settings",
+		Icon = "settings",
 		Desc = "Settings Section"
 	}),
 	SeaSettingsTab = Window:Tab({
 		Title = "Sea Settings",
+		Icon = "cog",
 		Desc = "Sea Settings Section"
 	}),
 	MiscTab = Window:Tab({
 		Title = "Misc",
+		Icon = "layout-grid",
 		Desc = "Misc Section"
 	}),
 	ServerTab = Window:Tab({
 		Title = "Server",
+		Icon = "server",
 		Desc = "Server Section"
 	}),
 	ShopTab = Window:Tab({
 		Title = "Shop",
+		Icon = "shopping-cart",
 		Desc = "Shop Section"
 	}),
 };
