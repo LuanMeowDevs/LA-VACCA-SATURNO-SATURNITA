@@ -1,11 +1,12 @@
-local WindUI = (loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/download/2.3.0/main.lua")))();
+local WindUI = (loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua")))();
 local Window = WindUI:CreateWindow({
     Title = "☄️Eclipse Hub☄️",
     Author = "By 1x1x1x1x1x1 And David Baszucki",
     Folder = "Eclipse Lunar Gen4",
     Size = UDim2.fromOffset(520, 300),
     Transparent = true,
-    Theme = "Aqua",
+    Theme = "Default",
+    Accent = Color3.fromRGB(0, 200, 220),
     SideBarWidth = 190,
     HasOutline = false,
 });
