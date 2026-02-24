@@ -240,6 +240,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto Saw Sword"] or false,
 	Callback = function(state)
 		_FHAutoSaw = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Saw Sword"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -270,6 +271,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto Saber Sword"] or false,
 	Callback = function(state)
 		_FHAutoSaber = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Saber Sword"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -303,6 +305,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto Usoap Hat"] or false,
 	Callback = function(state)
 		_FHAutoUsoap = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Usoap Hat"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -335,6 +338,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto Observation"] or false,
 	Callback = function(state)
 		_FHobsFarm = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Observation"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -380,6 +384,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto Bones"] or false,
 	Callback = function(state)
 		_FHBones = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Bones"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -402,6 +407,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto Bisento"] or false,
 	Callback = function(state)
 		_FHBisento = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Bisento"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -443,6 +449,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto Darkbeard"] or false,
 	Callback = function(state)
 		_FHDarkbeard = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Darkbeard"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -476,6 +483,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto Warden"] or false,
 	Callback = function(state)
 		_FHWarden = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Warden"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -516,6 +524,7 @@ Tabs.FarmingHopTab:Toggle({
 	Callback = function(state)
 		_FHEliteQuest = state;
 		_G.FarmEliteHunt = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then
 			_G.Settings.FarmHop["Auto Elite Quest"] = state;
 			(getgenv()).SaveSetting();
@@ -574,6 +583,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto Citizen Quest"] or false,
 	Callback = function(state)
 		_FHCitizenQuest = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Citizen Quest"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -604,6 +614,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto Rip Indra"] or false,
 	Callback = function(state)
 		_FHRipIndra = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Rip Indra"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -640,6 +651,7 @@ Tabs.FarmingHopTab:Toggle({
 	Callback = function(state)
 		_FHMarineCoat = state;
 		_G.MarinesCoat = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Marine Coat"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -676,6 +688,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto Swan Coat"] or false,
 	Callback = function(state)
 		_FHSwanCoat = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Swan Coat"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -712,6 +725,7 @@ Tabs.FarmingHopTab:Toggle({
 	Value = _G.Settings and _G.Settings.FarmHop and _G.Settings.FarmHop["Auto God Chalice"] or false,
 	Callback = function(state)
 		_FHGodChalice = state;
+		if not state then StopTween(false); end;
 		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto God Chalice"] = state; (getgenv()).SaveSetting(); end;
 		SaveFH();
 	end
@@ -1675,13 +1689,59 @@ function CheckQuest()
 			NameMon = "Serpent Hunter";
 			PosQ = CFrame.new(-16668.03, 105.32, 1568.60);
 			PosM = CFrame.new(-16645.64, 163.09, 1352.87);
-		elseif I >= 2575 then
+		elseif I >= 2575 and I <= 2699 then
 			Mon = "Skull Slayer";
 			Qdata = 2;
 			Qname = "TikiQuest3";
 			NameMon = "Skull Slayer";
 			PosQ = CFrame.new(-16668.03, 105.32, 1568.60);
 			PosM = CFrame.new(-16709.49, 419.68, 1751.09);
+		-- =============================================
+		-- SUBMERGED ISLAND (Level 2700+) — entra pelo
+		-- NPC do submarino na Tiki Outpost
+		-- =============================================
+		elseif I >= 2700 and I <= 2749 then
+			Mon = "Drowned Pirate";
+			Qdata = 1;
+			Qname = "SubmergedQuest1";
+			NameMon = "Drowned Pirate";
+			PosQ = CFrame.new(-16490.18, 55.77, 1768.44);   -- NPC submarino (Tiki)
+			PosM = CFrame.new(-16480.00, -85.00, 1740.00);  -- área submarina
+			if _G.Settings.Main["Auto Farm"] then
+				pcall(function()
+					(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(
+						"requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44)
+					);
+				end);
+			end;
+		elseif I >= 2750 and I <= 2824 then
+			Mon = "Lurker";
+			Qdata = 2;
+			Qname = "SubmergedQuest1";
+			NameMon = "Lurker";
+			PosQ = CFrame.new(-16490.18, 55.77, 1768.44);
+			PosM = CFrame.new(-16420.00, -90.00, 1700.00);
+			if _G.Settings.Main["Auto Farm"] then
+				pcall(function()
+					(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(
+						"requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44)
+					);
+				end);
+			end;
+		elseif I >= 2825 then
+			Mon = "Sea Raider";
+			Qdata = 2;
+			Qname = "SubmergedQuest2";
+			NameMon = "Sea Raider";
+			PosQ = CFrame.new(-16490.18, 55.77, 1768.44);
+			PosM = CFrame.new(-16380.00, -95.00, 1680.00);
+			if _G.Settings.Main["Auto Farm"] then
+				pcall(function()
+					(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(
+						"requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44)
+					);
+				end);
+			end;
 		end;
 	end;
 	LevelQuest = Qdata;
@@ -2427,6 +2487,38 @@ function EquipWeapon(ToolSe)
 		if game.Players.LocalPlayer.Backpack:FindFirstChild(ToolSe) then
 			Tool = game.Players.LocalPlayer.Backpack:FindFirstChild(ToolSe);
 			game.Players.LocalPlayer.Character.Humanoid:EquipTool(Tool);
+		end;
+	end;
+end;
+-- Equipa a arma correta automaticamente baseado no tipo selecionado (Melee/Sword/Fruit/Gun)
+function EquipFarmWeapon()
+	local wp = _G.ChooseWP or "Melee";
+	local plr = game.Players.LocalPlayer;
+	local char = plr.Character;
+	if not char then return; end;
+	if wp == "Sword" then
+		for _, v in pairs(plr.Backpack:GetChildren()) do
+			if v:IsA("Tool") and v.ToolTip == "Sword" then
+				char.Humanoid:EquipTool(v); return;
+			end;
+		end;
+	elseif wp == "Fruit" then
+		for _, v in pairs(plr.Backpack:GetChildren()) do
+			if v:IsA("Tool") and v.ToolTip == "Blox Fruit" then
+				char.Humanoid:EquipTool(v); return;
+			end;
+		end;
+	elseif wp == "Gun" then
+		for _, v in pairs(plr.Backpack:GetChildren()) do
+			if v:IsA("Tool") and v.ToolTip == "Gun" then
+				char.Humanoid:EquipTool(v); return;
+			end;
+		end;
+	else -- Melee / Fighting Style
+		for _, v in pairs(plr.Backpack:GetChildren()) do
+			if v:IsA("Tool") and (v.ToolTip == "Melee" or v.ToolTip == "Fighting Style") then
+				char.Humanoid:EquipTool(v); return;
+			end;
 		end;
 	end;
 end;
@@ -3184,6 +3276,8 @@ end;
 spawn(function()
 	while task.wait() do
 		if _G.EclipseLevel and _G.EclipseStartFarm then
+			-- Pausa imediatamente se uma fruta apareceu
+			if _G.FruitInterrupt then task.wait(0.1); end;
 			pcall(function()
 				local plr  = game.Players.LocalPlayer;
 				local Root = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
@@ -3199,10 +3293,17 @@ spawn(function()
 					TpConditional(Root, Q[6], TP_DIST_THRESHOLD);
 					if (Root.Position - Q[6].Position).Magnitude <= 50 then
 						task.wait(1.9);
+						if not _G.EclipseStartFarm or not _G.EclipseLevel then return; end;
 						(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("StartQuest", Q[3], Q[2]);
+						task.wait(0.3);
+						-- Equipa a arma automaticamente assim que pega a missão
+						EquipFarmWeapon();
 					end;
 					return;
 				end;
+				-- Equipa a arma correta antes de farmar
+				EquipFarmWeapon();
+				AutoHaki();
 				-- Procura mob mais próximo
 				local Nearest = GetNearestLevelMob(Q[1]);
 				if M3LevelCurrentMob and G.Alive(M3LevelCurrentMob) and M3LevelCurrentMob.Parent then
@@ -3218,15 +3319,17 @@ spawn(function()
 				M3LevelCurrentMob = Nearest;
 				if M3LevelCurrentMob and M3LevelCurrentMob:FindFirstChild("HumanoidRootPart") then
 					TweenPlayer(M3LevelCurrentMob.HumanoidRootPart.CFrame * Pos);
-					EquipWeapon(_G.Settings.Main["Selected Weapon"]);
+					EquipFarmWeapon();
 					AutoHaki();
 				end;
 				repeat
 					task.wait();
+					if _G.FruitInterrupt then break; end;
 					G.Kill(M3LevelCurrentMob, true);
-					EquipWeapon(_G.Settings.Main["Selected Weapon"]);
+					EquipFarmWeapon();
 					AutoHaki();
 				until not _G.EclipseStartFarm or not _G.EclipseLevel
+					  or _G.FruitInterrupt
 					  or not M3LevelCurrentMob.Parent
 					  or M3LevelCurrentMob.Humanoid.Health <= 0;
 				M3LevelCurrentMob = nil;
@@ -4782,110 +4885,7 @@ spawn(function()
 		end;
 	end;
 end);
-EliteHunterSection = Tabs.OthersTab:Section({
-	Title = "Elite Hunter",
-	TextXAlignment = "Left"
-});
-EliteHunterParagraph = Tabs.OthersTab:Paragraph({
-	Title = "Elite Hunter Status",
-	Desc = "N/A"
-});
-spawn(function()
-	while wait(0.2) do
-		pcall(function()
-			if (game:GetService("ReplicatedStorage")):FindFirstChild("Diablo") or (game:GetService("ReplicatedStorage")):FindFirstChild("Deandre") or (game:GetService("ReplicatedStorage")):FindFirstChild("Urban") or (game:GetService("Workspace")).Enemies:FindFirstChild("Diablo") or (game:GetService("Workspace")).Enemies:FindFirstChild("Deandre") or (game:GetService("Workspace")).Enemies:FindFirstChild("Urban") then
-				EliteHunterParagraph:SetDesc("Spawn!");
-			else
-				EliteHunterParagraph:SetDesc("Not Spawn");
-			end;
-		end);
-	end;
-end);
-EliteHunterProgressParagraph = Tabs.OthersTab:Paragraph({
-	Title = "Elite Hunter Progress",
-	Desc = "N/A"
-});
-spawn(function()
-	while wait() do
-		pcall(function()
-			if World1 or World2 then
-				EliteHunterProgressParagraph:SetDesc("Sea 3 Only");
-			elseif World3 then
-				EliteHunterProgressParagraph:SetDesc((game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("EliteHunter", "Progress"));
-			end;
-		end);
-	end;
-end);
-AutoEliteHunterToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Elite Hunter",
-	Desc = "Function Sea 3 Only",
-	Value = _G.Settings.Farm["Auto Elite Hunter"],
-	Callback = function(state)
-		_G.Settings.Farm["Auto Elite Hunter"] = state;
-		StopTween(_G.Settings.Farm["Auto Elite Hunter"]);
-		(getgenv()).SaveSetting();
-	end
-});
-AutoEliteHunterHopToggle = Tabs.OthersTab:Toggle({
-	Title = "Auto Elite Hunter Hop",
-	Desc = "Function Sea 3 Only",
-	Value = _G.Settings.Farm["Auto Elite Hunter Hop"],
-	Callback = function(state)
-		_G.Settings.Farm["Auto Elite Hunter Hop"] = state;
-		StopTween(_G.Settings.Farm["Auto Elite Hunter Hop"]);
-		(getgenv()).SaveSetting();
-	end
-});
-spawn(function()
-	while wait(0.2) do
-		if _G.Settings.Farm["Auto Elite Hunter"] and World3 then
-			pcall(function()
-				local QuestTitle = (game:GetService("Players")).LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text;
-				if (game:GetService("Workspace")).Enemies:FindFirstChild("Diablo") or (game:GetService("Workspace")).Enemies:FindFirstChild("Deandre") or (game:GetService("Workspace")).Enemies:FindFirstChild("Urban") then
-					if (game:GetService("Players")).LocalPlayer.PlayerGui.Main.Quest.Visible == false then
-						TweenPlayer(CFrame.new(-5418.892578125, 313.74130249023, -2826.2260742188));
-						if (Vector3.new((-5418.892578125), 313.74130249023, (-2826.2260742188)) - (game:GetService("Players")).LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 then
-							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("EliteHunter");
-						end;
-					elseif (game:GetService("Players")).LocalPlayer.PlayerGui.Main.Quest.Visible == true then
-						if string.find(QuestTitle, "Diablo") or string.find(QuestTitle, "Deandre") or string.find(QuestTitle, "Urban") then
-							if (game:GetService("Workspace")).Enemies:FindFirstChild("Diablo") or (game:GetService("Workspace")).Enemies:FindFirstChild("Deandre") or (game:GetService("Workspace")).Enemies:FindFirstChild("Urban") then
-								for i, v in pairs((game:GetService("Workspace")).Enemies:GetChildren()) do
-									if v.Name == "Diablo" or v.Name == "Deandre" or v.Name == "Urban" then
-										if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
-											repeat
-												(game:GetService("RunService")).Heartbeat:wait();
-												AutoHaki();
-												EquipWeapon(_G.Settings.Main["Selected Weapon"]);
-												v.Humanoid.WalkSpeed = 0;
-												v.HumanoidRootPart.Size = Vector3.new(1, 1, 1);
-												TweenPlayer(v.HumanoidRootPart.CFrame * Pos);
-												Attack();
-											until _G.Settings.Farm["Auto Elite Hunter"] == false or v.Humanoid.Health <= 0 or (not v.Parent);
-										end;
-									end;
-								end;
-							end;
-						end;
-					end;
-				end;
-			end);
-		end;
-	end;
-end);
-spawn(function()
-	while wait(0.2) do
-		if _G.Settings.Farm["Auto Elite Hunter Hop"] and World3 then
-			pcall(function()
-				if _G.Settings.Farm["Auto Elite Hunter"] then
-					if not (game:GetService("Workspace")).Enemies:FindFirstChild("Diablo") and (not (game:GetService("Workspace")).Enemies:FindFirstChild("Deandre")) and (not (game:GetService("Workspace")).Enemies:FindFirstChild("Urban")) then
-						Hop();
-					end;
-				end;
-			end);
-		end;
-	end;
-end);
+-- [Auto Elite Hunter + Hop foram movidos para a aba Farming And Hop para evitar duplicação]
 PirateRaidSection = Tabs.OthersTab:Section({
 	Title = "Pirate Raid",
 	TextXAlignment = "Left"
@@ -10899,25 +10899,136 @@ spawn(function()
 		end;
 	end;
 end);
+-- ======================================================
+-- FRUIT INTERRUPT SYSTEM
+-- Quando Tween To Fruit está ativo e uma fruta aparece,
+-- para tudo que envolve farm/teleporte imediatamente
+-- ======================================================
+_G.FruitInterrupt = false;
+
+local function _getFruitInWorkspace()
+	for _, v in pairs(workspace:GetChildren()) do
+		if string.find(v.Name, "Fruit") and v:FindFirstChild("Handle") then
+			return v;
+		end;
+	end;
+	return nil;
+end;
+
+local function _tweenToFruitAndPick(fruit)
+	if not fruit or not fruit.Parent or not fruit:FindFirstChild("Handle") then return; end;
+	local char = game.Players.LocalPlayer.Character;
+	if not char then return; end;
+	local hrp = char:FindFirstChild("HumanoidRootPart");
+	if not hrp then return; end;
+	local TweenSvc = game:GetService("TweenService");
+	local dist = (hrp.Position - fruit.Handle.Position).Magnitude;
+	local dur = math.max(0.3, dist / (_G.Settings.Setting["Player Tween Speed"] or 350));
+	local info = TweenInfo.new(dur, Enum.EasingStyle.Linear);
+	local tween = TweenSvc:Create(hrp, info, {CFrame = fruit.Handle.CFrame});
+	tween:Play();
+	local elapsed = 0;
+	while tween.PlaybackState == Enum.PlaybackState.Playing do
+		task.wait(0.05);
+		elapsed = elapsed + 0.05;
+		if elapsed > dur + 1 then break; end;
+	end;
+	-- Pega a fruta
+	pcall(function()
+		if fruit and fruit.Parent and fruit:FindFirstChild("Handle") then
+			fruit.Handle.CFrame = hrp.CFrame;
+		end;
+	end);
+end;
+
+local function _pauseFarmForFruit(fruit)
+	if _G.FruitInterrupt then return; end;
+	_G.FruitInterrupt = true;
+	-- Salva estados atuais
+	local sv_EclipseStart = _G.EclipseStartFarm;
+	local sv_EclipseLevel = _G.EclipseLevel;
+	local sv_EclipseBone  = _G.EclipseFarm_Bone;
+	local sv_EclipseCake  = _G.EclipseFarm_Cake;
+	local sv_AutoFarm     = _G.Settings.Main["Auto Farm"];
+	local sv_Mastery      = _G.Settings.Main["Auto Farm Fruit Mastery"];
+	local sv_Sword        = _G.Settings.Main["Auto Farm Sword Mastery"];
+	-- Para tudo
+	_G.EclipseStartFarm = false;
+	_G.EclipseLevel     = false;
+	_G.EclipseFarm_Bone = false;
+	_G.EclipseFarm_Cake = false;
+	_G.Settings.Main["Auto Farm"] = false;
+	_G.Settings.Main["Auto Farm Fruit Mastery"] = false;
+	_G.Settings.Main["Auto Farm Sword Mastery"] = false;
+	StopTween(false);
+	task.wait(0.2);
+	-- Vai buscar a fruta com tween real
+	_tweenToFruitAndPick(fruit);
+	task.wait(0.2);
+	_G.FruitInterrupt = false;
+	-- Restaura somente se o toggle ainda estiver ativo
+	if _G.Settings.Fruit["Tween To Fruit"] then
+		_G.EclipseStartFarm = sv_EclipseStart;
+		_G.EclipseLevel     = sv_EclipseLevel;
+		_G.EclipseFarm_Bone = sv_EclipseBone;
+		_G.EclipseFarm_Cake = sv_EclipseCake;
+		_G.Settings.Main["Auto Farm"] = sv_AutoFarm;
+		_G.Settings.Main["Auto Farm Fruit Mastery"] = sv_Mastery;
+		_G.Settings.Main["Auto Farm Sword Mastery"] = sv_Sword;
+	end;
+end;
+
+-- Detecta fruta ao aparecer no workspace (responde instantaneamente)
+workspace.ChildAdded:Connect(function(child)
+	if _G.Settings.Fruit["Tween To Fruit"]
+	   and not _G.FruitInterrupt
+	   and string.find(child.Name, "Fruit")
+	   and child:FindFirstChild("Handle") then
+		task.spawn(function()
+			task.wait(0.1); -- aguarda Handle estar pronto
+			_pauseFarmForFruit(child);
+		end);
+	end;
+end);
+
+-- ======================================================
+-- TELEPORT TO FRUIT
+-- Teleporta instantaneamente até a fruta (comportamento antigo)
+-- ⚠️ RISCO DE BAN — use por sua conta e risco
+-- ======================================================
 TeleportToFruitToggle = Tabs.FruitTab:Toggle({
 	Title = "Teleport To Fruit",
+	Desc = "⚠️ RISCO DE BAN — Teleporta instantâneo para a fruta. Use com cautela.",
 	Value = _G.Settings.Fruit["Teleport To Fruit"],
 	Callback = function(state)
 		_G.Settings.Fruit["Teleport To Fruit"] = state;
+		if not state then StopTween(false); end;
 		(getgenv()).SaveSetting();
 	end
 });
 spawn(function()
 	while wait(0.2) do
 		if _G.Settings.Fruit["Teleport To Fruit"] then
-			for i, v in pairs(game.Workspace:GetChildren()) do
-				if string.find(v.Name, "Fruit") then
-					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Handle.CFrame;
+			local char = game.Players.LocalPlayer.Character;
+			if not char then continue; end;
+			local hrp = char:FindFirstChild("HumanoidRootPart");
+			if not hrp then continue; end;
+			for _, v in pairs(workspace:GetChildren()) do
+				if string.find(v.Name, "Fruit") and v:FindFirstChild("Handle") then
+					hrp.CFrame = v.Handle.CFrame;
+					task.wait(0.05);
+					v.Handle.CFrame = hrp.CFrame;
 				end;
 			end;
 		end;
 	end;
 end);
+
+-- ======================================================
+-- TWEEN TO FRUIT
+-- Move o personagem até a fruta usando tween (suave)
+-- Para tudo que está farmando ao detectar a fruta
+-- ======================================================
 local collectFruits = function()
 	local char = game.Players.LocalPlayer.Character;
 	if not char then return end;
@@ -10927,59 +11038,28 @@ local collectFruits = function()
 		end;
 	end;
 end;
-local function getFruitInWorkspace()
-	for _, v in pairs(workspace:GetChildren()) do
-		if string.find(v.Name, "Fruit") and v:FindFirstChild("Handle") then
-			return v;
-		end;
-	end;
-	return nil;
-end;
+
 TweenToFruitToggle = Tabs.FruitTab:Toggle({
 	Title = "Tween To Fruit",
-	Desc = "Pauses farm when fruit spawns, teleports to it, then resumes farm",
+	Desc = "Move suavemente até a fruta e para o farm quando ela aparecer.",
 	Value = _G.Settings.Fruit["Tween To Fruit"],
 	Callback = function(state)
 		_G.Settings.Fruit["Tween To Fruit"] = state;
 		if not state then
-			_G.FetchingFruit = false;
+			_G.FruitInterrupt = false;
 		end;
 		(getgenv()).SaveSetting();
 	end
 });
+-- Loop de verificação para frutas que já estão no workspace
 spawn(function()
 	while wait(0.5) do
-		if _G.Settings.Fruit["Tween To Fruit"] and not _G.FetchingFruit then
-			local fruit = getFruitInWorkspace();
+		if _G.Settings.Fruit["Tween To Fruit"] and not _G.FruitInterrupt then
+			local fruit = _getFruitInWorkspace();
 			if fruit then
-				_G.FetchingFruit = true;
-				local farmWasOn = _G.Settings.Main["Auto Farm"];
-				local masteryWasOn = _G.Settings.Main["Auto Farm Fruit Mastery"];
-				local swordWasOn = _G.Settings.Main["Auto Farm Sword Mastery"];
-				_G.Settings.Main["Auto Farm"] = false;
-				_G.Settings.Main["Auto Farm Fruit Mastery"] = false;
-				_G.Settings.Main["Auto Farm Sword Mastery"] = false;
-				wait(0.3);
-				local char = game.Players.LocalPlayer.Character;
-				fruit = getFruitInWorkspace();
-				while fruit and _G.Settings.Fruit["Tween To Fruit"] do
-					pcall(function()
-						if fruit and fruit:FindFirstChild("Handle") and fruit.Parent then
-							char.HumanoidRootPart.CFrame = fruit.Handle.CFrame;
-							wait(0.2);
-							collectFruits();
-						end;
-					end);
-					wait(0.2);
-					fruit = getFruitInWorkspace();
-				end;
-				wait(0.3);
-				_G.FetchingFruit = false;
-				if _G.Settings.Fruit["Tween To Fruit"] then
-					_G.Settings.Main["Auto Farm"] = farmWasOn;
-					_G.Settings.Main["Auto Farm Fruit Mastery"] = masteryWasOn;
-					_G.Settings.Main["Auto Farm Sword Mastery"] = swordWasOn;
-				end;
+				task.spawn(function()
+					_pauseFarmForFruit(fruit);
+				end);
 			end;
 		end;
 	end;
