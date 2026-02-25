@@ -1,4 +1,27 @@
-local WindUI = (loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua")))();
+-- ============================================================
+-- ECLIPSE HUB - Banana Cat Hub Library (LibraryObii)
+-- ============================================================
+Library = loadstring(game:HttpGet("https://luacrack.site/index.php/anhkhoarb500gmail.com/raw/LibraryObii.lua"))()
+if Library.SetColors then
+    Library:SetColors({
+        Background      = Color3.fromRGB(0, 0, 0),
+        Header          = Color3.fromRGB(5, 5, 5),
+        DarkContrast    = Color3.fromRGB(10, 10, 10),
+        LightContrast   = Color3.fromRGB(18, 18, 18),
+        SchemeColor     = Color3.fromRGB(0, 200, 255),
+        TextColor       = Color3.fromRGB(255, 255, 255),
+        BorderColor     = Color3.fromRGB(0, 200, 255),
+        ButtonColor     = Color3.fromRGB(0, 200, 255),
+        ButtonTextColor = Color3.fromRGB(0, 0, 0),
+        ToggleColor     = Color3.fromRGB(0, 200, 255),
+        Transparency    = 0.3,
+    })
+elseif Library.SetScheme then
+    Library:SetScheme(Color3.fromRGB(0, 200, 255))
+end
+-- WindUI shim: compatibilidade com o restante do código
+local WindUI = {}
+WindUI._lib = Library
 
 -- ====== FAST ATTACK MODULE ======
 task.spawn(function()
@@ -14,21 +37,105 @@ task.spawn(function()
 	end;
 end);
 
-local Window = WindUI:CreateWindow({
+local Window = Library:CreateWindow({
     Title = "☄️Eclipse Hub☄️",
-    Author = "By 1x1x1x1x1x1 And David Baszucki",
-    Folder = "Eclipse Lunar Gen4",
-    Size = UDim2.fromOffset(520, 300),
-    Transparent = true,
-    Theme = "Sky",
-    SideBarWidth = 190,
-    HasOutline = false,
-});
-Window:EditOpenButton({
-    Title = "☄️Eclipse Hub☄️",
-    CornerRadius = UDim.new(0, 10),
-    Draggable = false
-});
+    Subtitle = "- Blox Fruits",
+    Image = "rbxassetid://112518061635682",
+    Icon  = "rbxassetid://112518061635682",
+    Transparency = 0.3,
+})
+-- Shim: método Tab como AddTab
+local _origTab = Window
+Window._tabs = {}
+function Window:Tab(opts)
+    local title = opts.Title or ""
+    local libTab = _origTab:AddTab(title)
+    -- Wrapper que emula WindUI Tab API
+    local tabWrapper = {_libTab = libTab, _groupboxes = {}}
+    -- _lastGB: guarda o último groupbox criado para elementos sem Section
+    tabWrapper._lastGB = nil
+    local function ensureGB()
+        if not tabWrapper._lastGB then
+            tabWrapper._lastGB = libTab:AddLeftGroupbox("")
+        end
+        return tabWrapper._lastGB
+    end
+    function tabWrapper:Section(sopts)
+        local gb = libTab:AddLeftGroupbox(sopts.Title or "")
+        tabWrapper._lastGB = gb
+        return _makeSection(gb)
+    end
+    function tabWrapper:Toggle(topts) return _makeSection(ensureGB()):Toggle(topts) end
+    function tabWrapper:Button(bopts) return _makeSection(ensureGB()):Button(bopts) end
+    function tabWrapper:Dropdown(dopts) return _makeSection(ensureGB()):Dropdown(dopts) end
+    function tabWrapper:Slider(sopts) return _makeSection(ensureGB()):Slider(sopts) end
+    function tabWrapper:Input(iopts) return _makeSection(ensureGB()):Input(iopts) end
+    function tabWrapper:Paragraph(popts) return _makeSection(ensureGB()):Paragraph(popts) end
+    return tabWrapper
+end
+function Window:SelectTab(n) end -- no-op
+-- Shim: seção helper
+_keyGen = 0
+function _makeSection(gb)
+    local sec = {}
+    function sec:Toggle(opts)
+        _keyGen = _keyGen + 1
+        local key = ((opts.Title or ""):gsub("[^%w]","")) .. "_" .. _keyGen
+        local tog = gb:AddToggle(key, {
+            Title = opts.Title or "",
+            Default = opts.Value or false,
+            Callback = opts.Callback or function() end,
+        })
+        -- Shim SetValue
+        local wrapper = {}
+        function wrapper:SetValue(v)
+            if Toggles and Toggles[key] then Toggles[key]:SetValue(v) end
+        end
+        return wrapper
+    end
+    function sec:Button(opts)
+        gb:AddButton({Title = opts.Title or "", Callback = opts.Callback or function() end})
+    end
+    function sec:Dropdown(opts)
+        _keyGen = _keyGen + 1
+        local key = ((opts.Title or ""):gsub("[^%w]","")) .. "_" .. _keyGen
+        gb:AddDropdown(key, {
+            Title    = opts.Title or "",
+            Values   = opts.Values or {},
+            Default  = opts.Value or nil,
+            Multi    = false,
+            Callback = opts.Callback or function() end,
+        })
+    end
+    function sec:Slider(opts)
+        local v = opts.Value or {}
+        gb:AddSlider({
+            Title    = opts.Title or "",
+            Min      = (type(v) == "table" and v.Min) or opts.Min or 0,
+            Max      = (type(v) == "table" and v.Max) or opts.Max or 100,
+            Default  = (type(v) == "table" and v.Default) or opts.Default or 0,
+            Rounding = opts.Step or 0,
+            Callback = opts.Callback or function() end,
+        })
+    end
+    function sec:Input(opts)
+        _keyGen = _keyGen + 1
+        local key = ((opts.Title or ""):gsub("[^%w]","")) .. "_" .. _keyGen
+        gb:AddInput(key, {
+            Title    = opts.Title or "",
+            Default  = opts.Value or "",
+            Callback = opts.Callback or function() end,
+        })
+    end
+    function sec:Paragraph(opts)
+        local lbl = gb:AddLabel((opts.Title or "") .. (opts.Desc and (": " .. opts.Desc) or ""))
+        local prefix = opts.Title or ""
+        return {
+            SetDesc = function(_, txt) pcall(function() lbl:SetText(prefix .. ": " .. (txt or "")) end) end
+        }
+    end
+    return sec
+end
 local Tabs = {
 	InfoTab = Window:Tab({
 		Title = "Info",
@@ -135,13 +242,18 @@ local Tabs = {
 		Icon = "shopping-cart",
 		Desc = "Shop Section"
 	}),
+	MultiFarmTab = Window:Tab({
+		Title = "Multi Farm",
+		Icon = "layers",
+		Desc = "Multi Farm - Em Breve"
+	}),
 };
-Window:SelectTab(1);
+-- Window:SelectTab(1) -- handled by shim
 
 -- Script Loaded notification (fires after UI is ready)
 task.delay(2, function()
 	pcall(function()
-		WindUI:Notify({
+		Library:Notify({
 			Title = "☄️ Eclipse Hub",
 			Content = "Script carregado com sucesso!\nBem-vindo, " .. game.Players.LocalPlayer.Name .. " 👋",
 			Icon = "rocket",
@@ -2682,6 +2794,7 @@ end;
 getgenv().TweenSpeedFar = 350;
 getgenv().TweenSpeedNear = 700;
 local shouldTween = false;
+local _tweenRestored = true; -- track if CanCollide was restored
 task.spawn(function()
 	local plr = game.Players.LocalPlayer;
 	repeat task.wait() until plr.Character and plr.Character.PrimaryPart;
@@ -2689,6 +2802,7 @@ task.spawn(function()
 	while task.wait() do
 		pcall(function()
 			if shouldTween then
+				_tweenRestored = false;
 				if C and C.Parent == workspace then
 					local e = plr.Character and plr.Character.PrimaryPart;
 					if e and (e.Position - C.Position).Magnitude <= 200 then
@@ -2697,6 +2811,7 @@ task.spawn(function()
 						C.CFrame = e.CFrame;
 					end;
 				end;
+				-- Desativa colisão APENAS durante tween ativo
 				local e = plr.Character;
 				if e then
 					for _, v in pairs(e:GetChildren()) do
@@ -2706,11 +2821,20 @@ task.spawn(function()
 					end;
 				end;
 			else
-				local e = plr.Character;
-				if e then
-					for _, v in pairs(e:GetChildren()) do
-						if v:IsA("BasePart") then
-							v.CanCollide = true;
+				-- Restaura colisão imediatamente quando tween para
+				if not _tweenRestored then
+					_tweenRestored = true;
+					local e = plr.Character;
+					if e then
+						for _, v in pairs(e:GetChildren()) do
+							if v:IsA("BasePart") then
+								v.CanCollide = true;
+							end;
+						end;
+						-- Sincroniza C com posição atual
+						local hrp = e:FindFirstChild("HumanoidRootPart");
+						if hrp and C and C.Parent then
+							C.CFrame = hrp.CFrame;
 						end;
 					end;
 				end;
@@ -3063,10 +3187,33 @@ function StopTween(State)
 	if not State then
 		_G.StopTween = true;
 		shouldTween = false;
-		TweenPlayer((game:GetService("Players")).LocalPlayer.Character.HumanoidRootPart.CFrame);
-		if (game:GetService("Players")).LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
-			((game:GetService("Players")).LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip")):Destroy();
-		end;
+		-- Cancela tweens ativos imediatamente
+		pcall(function()
+			local plr = game.Players.LocalPlayer;
+			local char = plr.Character;
+			if not char then return; end;
+			local hrp = char:FindFirstChild("HumanoidRootPart");
+			if not hrp then return; end;
+			-- Sincroniza C com posição atual para não arrastar
+			if C and C.Parent then
+				C.CFrame = hrp.CFrame;
+			end;
+			-- Remove BodyClip se existir
+			if hrp:FindFirstChild("BodyClip") then
+				hrp:FindFirstChild("BodyClip"):Destroy();
+			end;
+			-- Restaura física de todas as partes do personagem
+			for _, v in pairs(char:GetDescendants()) do
+				if v:IsA("BasePart") then
+					v.CanCollide = true;
+					if v.Anchored and v ~= hrp then
+						v.Anchored = false;
+					end;
+				end;
+			end;
+			-- Libera HRP
+			hrp.Anchored = false;
+		end);
 		_G.StopTween = false;
 	end;
 end;
@@ -3145,7 +3292,7 @@ DiscordServerParagraph = Tabs.MainTab:Paragraph({
 			Title = "Copy Link",
 			Callback = function()
 				setclipboard("https://discord.gg/BJVQqMtZ2A");
-				WindUI:Notify({
+				Library:Notify({
 					Title = "Notification",
 					Content = "Copied",
 					Icon = "bell",
@@ -3187,6 +3334,30 @@ _G.EclipseAcceptQuest = false;
 
 local FARM_HEIGHT          = 45;
 local TP_DIST_THRESHOLD    = 15;
+
+-- ============================================================
+-- RESPAWN HANDLER: continua farm mesmo após morte/reset
+-- ============================================================
+local _waitingForChar = false;
+game.Players.LocalPlayer.CharacterAdded:Connect(function(newChar)
+	_waitingForChar = true;
+	task.wait(2); -- aguarda personagem carregar completamente
+	_waitingForChar = false;
+	-- Re-sincroniza a parte C com o novo personagem
+	pcall(function()
+		local newHRP = newChar:WaitForChild("HumanoidRootPart", 5);
+		if newHRP and C and C.Parent then
+			C.CFrame = newHRP.CFrame;
+		end;
+		shouldTween = false;
+		_tweenRestored = false;
+	end);
+	-- Restaura estado de farm se estava ativo
+	if _G.EclipseStartFarm then
+		task.wait(1);
+		_G.StopTween = false;
+	end;
+end);
 
 local function TpConditional(hrp, targetCF, threshold)
 	if not hrp or not targetCF then return; end;
@@ -3293,34 +3464,44 @@ local function GetNearestLevelMob(targetName)
 end;
 
 spawn(function()
-	while task.wait() do
+	while task.wait(0.1) do
 		if _G.EclipseLevel and _G.EclipseStartFarm then
-			-- Pausa imediatamente se uma fruta apareceu
+			-- Pausa se personagem está respawnando
+			if _waitingForChar then task.wait(2.5); end;
+			-- Pausa se fruta apareceu
 			if _G.FruitInterrupt then task.wait(0.1); end;
 			pcall(function()
 				local plr  = game.Players.LocalPlayer;
-				local Root = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+				-- Re-obtém personagem após respawn
+				local char = plr.Character;
+				if not char then return; end;
+				local Root = char:FindFirstChild("HumanoidRootPart");
 				if not Root then return; end;
 				local Q = QuestNeta();
-				-- Abandona quest errada
-				local QuestTitle = plr.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text;
-				if not string.find(QuestTitle, Q[5] or "") then
+				if not Q or not Q[1] then return; end;
+				-- Verifica quest ativa
+				local QuestVisible = plr.PlayerGui.Main.Quest.Visible;
+				local QuestTitle   = plr.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text;
+				-- Cancela quest anterior ou errada IMEDIATAMENTE
+				if QuestVisible and not string.find(QuestTitle, Q[5] or "") then
 					(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("AbandonQuest");
+					task.wait(0.3);
+					return;
 				end;
 				-- Pega quest se não tiver
-				if not plr.PlayerGui.Main.Quest.Visible then
-					TpConditional(Root, Q[6], TP_DIST_THRESHOLD);
+				if not QuestVisible then
+					TweenPlayer(Q[6]);
+					task.wait(0.1);
 					if (Root.Position - Q[6].Position).Magnitude <= 50 then
-						task.wait(1.9);
+						task.wait(0.8);
 						if not _G.EclipseStartFarm or not _G.EclipseLevel then return; end;
 						(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("StartQuest", Q[3], Q[2]);
 						task.wait(0.3);
-						-- Equipa a arma automaticamente assim que pega a missão
 						EquipFarmWeapon();
 					end;
 					return;
 				end;
-				-- Equipa a arma correta antes de farmar
+				-- Equipa arma e haki
 				EquipFarmWeapon();
 				AutoHaki();
 				-- Procura mob mais próximo
@@ -3332,23 +3513,28 @@ spawn(function()
 					M3LevelCurrentMob = nil;
 				end;
 				if not Nearest then
-					TpConditional(Root, Q[4], TP_DIST_THRESHOLD);
+					TweenPlayer(Q[4]);
 					return;
 				end;
 				M3LevelCurrentMob = Nearest;
 				if M3LevelCurrentMob and M3LevelCurrentMob:FindFirstChild("HumanoidRootPart") then
-					TweenPlayer(M3LevelCurrentMob.HumanoidRootPart.CFrame * Pos);
+					-- Usa _G.FarmOffset para posição customizada
+					local farmOffset = _G.FarmOffset or Pos;
+					TweenPlayer(M3LevelCurrentMob.HumanoidRootPart.CFrame * farmOffset);
 					EquipFarmWeapon();
 					AutoHaki();
 				end;
 				repeat
 					task.wait();
-					if _G.FruitInterrupt then break; end;
+					if _G.FruitInterrupt or _waitingForChar then break; end;
+					-- Revalida personagem a cada iteração
+					char = plr.Character;
+					if not char or not char:FindFirstChild("HumanoidRootPart") then break; end;
 					G.Kill(M3LevelCurrentMob, true);
 					EquipFarmWeapon();
 					AutoHaki();
 				until not _G.EclipseStartFarm or not _G.EclipseLevel
-					  or _G.FruitInterrupt
+					  or _G.FruitInterrupt or _waitingForChar
 					  or not M3LevelCurrentMob.Parent
 					  or M3LevelCurrentMob.Humanoid.Health <= 0;
 				M3LevelCurrentMob = nil;
@@ -4957,11 +5143,17 @@ ChestFarmSection = Tabs.OthersTab:Section({
 -- Detecta subida de Beli para confirmar coleta e salta
 -- imediatamente para o próximo baú sem esperar timeout.
 -- =========================================================
+-- AUTO FARM CHEST TWEEN
+-- Varre TODO o workspace em busca de baús (não só ChestModels).
+-- Ordena por distância do jogador → vai pro mais perto primeiro.
+-- Detector de Beli via evento: pula pro próximo baú imediatamente
+-- assim que o dinheiro sobe (coleta confirmada).
+-- =========================================================
 local _chestTweenActive = false;
 local _chestTweenLastBeli = 0;
 AutoFarmChestTweenToggle = Tabs.OthersTab:Toggle({
 	Title = "Auto Farm Chest Tween",
-	Desc = "Tween rápido para cada baú — pula pro próximo ao subir o dinheiro",
+	Desc = "Tween do mais perto ao mais longe — todo o mapa",
 	Value = _G.Settings.Farm["Auto Farm Chest Tween"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Farm Chest Tween"] = state;
@@ -4970,7 +5162,7 @@ AutoFarmChestTweenToggle = Tabs.OthersTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
--- Listener de Beli: detecta subida instantaneamente
+-- Listener de Beli: sinal imediato ao coletar
 task.spawn(function()
 	local plr = game.Players.LocalPlayer;
 	repeat task.wait() until plr.Data and plr.Data:FindFirstChild("Beli");
@@ -4978,31 +5170,59 @@ task.spawn(function()
 		_chestTweenLastBeli = plr.Data.Beli.Value;
 	end);
 end);
+-- Função que coleta TODOS os baús do mapa (busca recursiva)
+local function _getAllMapChests(playerPos)
+	local chests = {};
+	local function scanFolder(folder)
+		if not folder then return; end;
+		for _, v in pairs(folder:GetChildren()) do
+			local rp = v:FindFirstChild("RootPart") or v:FindFirstChild("HumanoidRootPart");
+			if v.Name:find("Chest") and rp then
+				local dist = (rp.Position - playerPos).Magnitude;
+				table.insert(chests, {model = v, root = rp, dist = dist});
+			end;
+			if #v:GetChildren() > 0 then scanFolder(v); end;
+		end;
+	end;
+	-- Procura em ChestModels (spawn normal)
+	pcall(function() scanFolder(workspace:FindFirstChild("ChestModels")); end);
+	-- Procura em todo o workspace (baús em ilhas/localizações)
+	pcall(function()
+		for _, v in pairs(workspace:GetDescendants()) do
+			local rp = v:FindFirstChild("RootPart");
+			if rp and v.Name:find("Chest") and not v:IsA("BasePart") then
+				-- Evita duplicatas já adicionadas
+				local alreadyAdded = false;
+				for _, c in ipairs(chests) do
+					if c.model == v then alreadyAdded = true; break; end;
+				end;
+				if not alreadyAdded then
+					local dist = (rp.Position - playerPos).Magnitude;
+					table.insert(chests, {model = v, root = rp, dist = dist});
+				end;
+			end;
+		end;
+	end);
+	table.sort(chests, function(a, b) return a.dist < b.dist; end);
+	return chests;
+end;
 task.spawn(function()
 	while task.wait(0) do
-		if not _chestTweenActive then task.wait(0.1); continue; end;
+		if not _chestTweenActive then task.wait(0.15); continue; end;
 		pcall(function()
 			local plr = game.Players.LocalPlayer;
 			local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
 			if not hrp then return; end;
-			-- Coleta baús ordenados por distância
-			local chests = {};
-			for _, v in pairs(workspace.ChestModels:GetChildren()) do
-				if v.Name:find("Chest") and v:FindFirstChild("RootPart") then
-					local dist = (v.RootPart.Position - hrp.Position).Magnitude;
-					table.insert(chests, {model = v, dist = dist});
-				end;
-			end;
-			if #chests == 0 then task.wait(0.3); return; end;
-			table.sort(chests, function(a, b) return a.dist < b.dist; end);
+			local chests = _getAllMapChests(hrp.Position);
+			if #chests == 0 then task.wait(0.5); return; end;
 			for _, entry in ipairs(chests) do
 				if not _chestTweenActive then break; end;
-				local v = entry.model;
-				if not v or not v.Parent or not v:FindFirstChild("RootPart") then continue; end;
+				local v   = entry.model;
+				local rp  = entry.root;
+				if not v or not v.Parent or not rp or not rp.Parent then continue; end;
 				local beliBefore = _chestTweenLastBeli;
-				-- Tween rápido direto ao baú
-				TweenPlayer(v.RootPart.CFrame);
-				-- Aguarda coleta: sai imediatamente quando Beli subir ou baú sumir
+				TweenPlayer(rp.CFrame);
+				-- Aguarda chegada: sai quando Beli sobe (coletou) ou baú sumiu
 				local timeout = 0;
 				repeat
 					task.wait(0.03);
@@ -5010,7 +5230,7 @@ task.spawn(function()
 				until not _chestTweenActive
 					or not v.Parent
 					or _chestTweenLastBeli > beliBefore
-					or timeout >= 2.5;
+					or timeout >= 3;
 			end;
 		end);
 	end;
@@ -5018,13 +5238,13 @@ end);
 
 -- =========================================================
 -- AUTO FARM CHEST BYPASS
--- Teleporte instantâneo (CFrame direto) em todos os baús.
--- Após varrer todos, espera 12s e reinicia o ciclo.
+-- Teleporte CFrame direto para cada baú — zero delay.
+-- Após varrer todos os baús, reseta em 7 segundos e repete.
 -- =========================================================
 local _chestBypassActive = false;
 AutoFarmChestInstantToggle = Tabs.OthersTab:Toggle({
 	Title = "Auto Farm Chest Bypass",
-	Desc = "Teleporte instantâneo em todos os baús — reset a cada 12s",
+	Desc = "Teleporte instantâneo — reset a cada 7s",
 	Value = _G.Settings.Farm["Auto Farm Chest Instant"],
 	Callback = function(state)
 		_G.Settings.Farm["Auto Farm Chest Instant"] = state;
@@ -5039,19 +5259,27 @@ task.spawn(function()
 			local hrp = game.Players.LocalPlayer.Character
 				and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
 			if not hrp then return; end;
-			-- Varre todos os baús do ciclo atual sem delay
-			for _, v in pairs(workspace.ChestModels:GetChildren()) do
-				if not _chestBypassActive then break; end;
-				if v and v.Parent and v.Name:find("Chest") and v:FindFirstChild("RootPart") then
-					hrp.CFrame = v.RootPart.CFrame;
-					task.wait(0.03);
+			-- Varre workspace.ChestModels + workspace inteiro
+			local visited = {};
+			local function bypassFolder(folder)
+				if not folder then return; end;
+				for _, v in pairs(folder:GetChildren()) do
+					if not _chestBypassActive then break; end;
+					local rp = v:FindFirstChild("RootPart");
+					if v.Name:find("Chest") and rp and not visited[v] then
+						visited[v] = true;
+						hrp.CFrame = rp.CFrame;
+						task.wait(0.03);
+					end;
+					if #v:GetChildren() > 0 then bypassFolder(v); end;
 				end;
 			end;
+			pcall(function() bypassFolder(workspace:FindFirstChild("ChestModels")); end);
 		end);
-		-- Reseta após 12 segundos (tempo de respawn dos baús)
+		-- Reset em 7 segundos para o próximo ciclo de respawn
 		if _chestBypassActive then
 			local t = 0;
-			while _chestBypassActive and t < 12 do
+			while _chestBypassActive and t < 7 do
 				task.wait(0.1);
 				t = t + 0.1;
 			end;
@@ -5675,6 +5903,74 @@ FarmDistanceSlider = Tabs.SettingsTab:Slider({
 		_G.Settings.Setting["Farm Distance"] = value;
 	end
 });
+
+-- ============================================================
+-- FARM POSITION OFFSET - Ajusta posição em relação ao mob
+-- ============================================================
+Tabs.SettingsTab:Section({Title = "Posição de Farm"});
+-- Inicializa offset global
+_G.FarmOffsetX = _G.FarmOffsetX or 0;
+_G.FarmOffsetY = _G.FarmOffsetY or 35;
+_G.FarmOffsetZ = _G.FarmOffsetZ or 0;
+local function _updateFarmOffset()
+	_G.FarmOffset = CFrame.new(_G.FarmOffsetX, _G.FarmOffsetY, _G.FarmOffsetZ);
+end;
+_updateFarmOffset();
+-- Preset positions
+Tabs.SettingsTab:Dropdown({
+	Title = "Preset de Posição",
+	Desc = "Posição pré-definida em relação ao mob",
+	Values = {"Cima (Padrão)", "Perto (Chão)", "Longe (Acima)", "Lado Direito", "Lado Esquerdo", "Atrás"},
+	Value = "Cima (Padrão)",
+	Callback = function(opt)
+		if opt == "Cima (Padrão)" then
+			_G.FarmOffsetX = 0; _G.FarmOffsetY = 35; _G.FarmOffsetZ = 0;
+		elseif opt == "Perto (Chão)" then
+			_G.FarmOffsetX = 0; _G.FarmOffsetY = 5; _G.FarmOffsetZ = 0;
+		elseif opt == "Longe (Acima)" then
+			_G.FarmOffsetX = 0; _G.FarmOffsetY = 60; _G.FarmOffsetZ = 0;
+		elseif opt == "Lado Direito" then
+			_G.FarmOffsetX = 8; _G.FarmOffsetY = 20; _G.FarmOffsetZ = 0;
+		elseif opt == "Lado Esquerdo" then
+			_G.FarmOffsetX = -8; _G.FarmOffsetY = 20; _G.FarmOffsetZ = 0;
+		elseif opt == "Atrás" then
+			_G.FarmOffsetX = 0; _G.FarmOffsetY = 20; _G.FarmOffsetZ = 8;
+		end;
+		_updateFarmOffset();
+	end
+});
+Tabs.SettingsTab:Slider({
+	Title = "Offset X (Lateral)",
+	Step = 1,
+	Value = {Min = -50, Max = 50, Default = 0},
+	Callback = function(v)
+		_G.FarmOffsetX = v; _updateFarmOffset();
+	end
+});
+Tabs.SettingsTab:Slider({
+	Title = "Offset Y (Altura)",
+	Step = 1,
+	Value = {Min = 0, Max = 80, Default = 35},
+	Callback = function(v)
+		_G.FarmOffsetY = v; _updateFarmOffset();
+	end
+});
+Tabs.SettingsTab:Slider({
+	Title = "Offset Z (Frente/Trás)",
+	Step = 1,
+	Value = {Min = -50, Max = 50, Default = 0},
+	Callback = function(v)
+		_G.FarmOffsetZ = v; _updateFarmOffset();
+	end
+});
+-- Mantém o Pos global sincronizado com FarmOffset para compatibilidade
+spawn(function()
+	while task.wait(0.1) do
+		if not _G.Settings.Setting["Spin Position"] then
+			Pos = _G.FarmOffset or CFrame.new(0, _G.Settings.Setting["Farm Distance"] or 35, 0);
+		end;
+	end;
+end);
 PlayerTweenSpeedSlider = Tabs.SettingsTab:Slider({
 	Title = "Player Tween Speed",
 	Step = 1,
@@ -6183,7 +6479,7 @@ spawn(function()
 							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyDeathStep");
 						end;
 					else
-						WindUI:Notify({
+						Library:Notify({
 							Title = "Notification",
 							Content = "Not Have Superhuman",
 							Icon = "bell",
@@ -6195,7 +6491,7 @@ spawn(function()
 							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuySharkmanKarate");
 						end;
 					else
-						WindUI:Notify({
+						Library:Notify({
 							Title = "Notification",
 							Content = "Not Have Death Step",
 							Icon = "bell",
@@ -6207,7 +6503,7 @@ spawn(function()
 							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyElectricClaw");
 						end;
 					else
-						WindUI:Notify({
+						Library:Notify({
 							Title = "Notification",
 							Content = "Not Have Sharkman Karate",
 							Icon = "bell",
@@ -6219,7 +6515,7 @@ spawn(function()
 							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyDragonTalon");
 						end;
 					else
-						WindUI:Notify({
+						Library:Notify({
 							Title = "Notification",
 							Content = "Not Have Electric Claw",
 							Icon = "bell",
@@ -6229,7 +6525,7 @@ spawn(function()
 					if (game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyDragonTalon", true) == 1 then
 						if (game:GetService("Players")).LocalPlayer.Backpack:FindFirstChild("Dragon Talon") and ((game:GetService("Players")).LocalPlayer.Backpack:FindFirstChild("Dragon Talon")).Level.Value >= 400 or (game:GetService("Players")).LocalPlayer.Character:FindFirstChild("Dragon Talon") and ((game:GetService("Players")).LocalPlayer.Character:FindFirstChild("Dragon Talon")).Level.Value >= 400 then
 							if string.find((game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyGodhuman", true), "Bring") then
-								WindUI:Notify({
+								Library:Notify({
 									Title = "Notification",
 									Content = "Not Have Enough Material",
 									Icon = "bell",
@@ -6240,7 +6536,7 @@ spawn(function()
 							end;
 						end;
 					else
-						WindUI:Notify({
+						Library:Notify({
 							Title = "Notification",
 							Content = "Not Have Dragon Talon",
 							Icon = "bell",
@@ -6758,7 +7054,7 @@ function GuitarPuzzleProgress()
 			CommF:InvokeServer("gravestoneEvent", 2, true);
 			task.wait(1);
 		else
-			WindUI:Notify({
+			Library:Notify({
 				Title = "Notification",
 				Content = "Hop Full Moon",
 				Icon = "bell",
@@ -6859,7 +7155,7 @@ function GuitarPuzzleProgress()
 end;
 function AutoSoulGuitar()
 	if (game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("soulGuitarBuy", true) == "[You already own this item.]" then
-		WindUI:Notify({
+		Library:Notify({
 			Title = "Notification",
 			Content = "You already own this item",
 			Icon = "bell",
@@ -6870,7 +7166,7 @@ function AutoSoulGuitar()
 	end;
 	if game.Players.LocalPlayer.Data.Fragments.Value < 5000 then
 		task.wait(2);
-		WindUI:Notify({
+		Library:Notify({
 			Title = "Notification",
 			Content = "Need 5000 Fragments",
 			Icon = "bell",
@@ -6880,7 +7176,7 @@ function AutoSoulGuitar()
 	end;
 	if not CheckItemCount("Ectoplasm", 250) then
 		task.wait(2);
-		WindUI:Notify({
+		Library:Notify({
 			Title = "Notification",
 			Content = "Need 250 Ectoplasm",
 			Icon = "bell",
@@ -7315,7 +7611,7 @@ spawn(function()
 						end;
 					end;
 				else
-					WindUI:Notify({
+					Library:Notify({
 						Title = "Notification",
 						Content = "Rip Indra Not Spawn",
 						Icon = "bell",
@@ -11064,7 +11360,7 @@ spawn(function()
 		if _G.Settings.Fruit["Fruit Notification"] then
 			for i, v in pairs(game.Workspace:GetChildren()) do
 				if string.find(v.Name, "Fruit") then
-					WindUI:Notify({
+					Library:Notify({
 						Title = "Fruit found",
 						Content = v.Name,
 						Icon = "bell",
@@ -11555,3 +11851,22 @@ spawn(function()
 		end);
 	end;
 end);
+-- ==============================================================
+-- MULTI FARM TAB
+-- ==============================================================
+do
+	local MF = Tabs.MultiFarmTab;
+	local MFSection = MF:Section({ Title = "Multi Farm", TextXAlignment = "Left" });
+
+	-- Banner de "Em breve"
+	MFSection:Paragraph({
+		Title = "🚧  EM BREVE  🚧",
+		Desc  = "A função Multi Farm está sendo desenvolvida e chegará em breve!\nAguarde as próximas atualizações do Eclipse Hub."
+	});
+
+	-- Preview placeholder
+	MFSection:Paragraph({
+		Title = "O que será:",
+		Desc  = "• Farm em múltiplos personagens ao mesmo tempo\n• Rotas automáticas de farm personalizado\n• Ciclos de boss + quest + baú integrados\n• Suporte a todas as ilhas dos 3 mares"
+	});
+end
