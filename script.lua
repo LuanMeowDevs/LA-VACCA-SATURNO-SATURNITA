@@ -6036,12 +6036,53 @@ end;
 getgenv().TweenSpeedFar = 350;
 getgenv().TweenSpeedNear = 700;
 local shouldTween = false;
+-- Flag: jogador esta se movendo manualmente — pausa o sync do tween
+getgenv().PlayerMoving = false;
+local _playerMoveTick = 0;
+local _MOVE_PAUSE_TIME = 2; -- segundos que o tween fica pausado apos input do jogador
+-- Detecta input de movimento do jogador
+task.spawn(function()
+	local UIS = game:GetService("UserInputService");
+	local movKeys = {
+		Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D,
+		Enum.KeyCode.Up, Enum.KeyCode.Down, Enum.KeyCode.Left, Enum.KeyCode.Right,
+		Enum.KeyCode.Space,
+	};
+	UIS.InputBegan:Connect(function(input, gpe)
+		if gpe then return end;
+		for _, k in pairs(movKeys) do
+			if input.KeyCode == k then
+				getgenv().PlayerMoving = true;
+				_playerMoveTick = tick();
+				shouldTween = false; -- para o sync imediatamente
+				break;
+			end;
+		end;
+	end);
+	UIS.InputEnded:Connect(function(input)
+		for _, k in pairs(movKeys) do
+			if input.KeyCode == k then
+				_playerMoveTick = tick(); -- reinicia o timer
+				break;
+			end;
+		end;
+	end);
+	-- Reset automatico apos MOVE_PAUSE_TIME sem input
+	while true do
+		task.wait(0.1);
+		if getgenv().PlayerMoving and (tick() - _playerMoveTick) > _MOVE_PAUSE_TIME then
+			getgenv().PlayerMoving = false;
+		end;
+	end;
+end);
 task.spawn(function()
 	local plr = game.Players.LocalPlayer;
 	repeat task.wait() until plr.Character and plr.Character.PrimaryPart;
 	C.CFrame = plr.Character.PrimaryPart.CFrame;
 	while task.wait() do
 		pcall(function()
+			-- Se o jogador esta se movendo manualmente, NAO faz sync
+			if getgenv().PlayerMoving then return; end;
 			if shouldTween then
 				if C and C.Parent == workspace then
 					local e = plr.Character and plr.Character.PrimaryPart;
@@ -14194,13 +14235,17 @@ local _DANGER_ZONES = {
 -- Tiki Outpost CFrame (loja de barcos no Sea 3)
 local _TIKI_OUTPOST_BOAT_DEALER = CFrame.new(-16927.451, 9.086, 433.864);
 
--- ===== SAIL SEA (CORRIGIDO) =====
+-- ===== SAIL SEA (CORRIGIDO v3 - Castelo Assombrado) =====
+-- Posicao do NPC de barco no Castelo Assombrado (Sea 2)
+local _HAUNTED_BOAT_NPC = CFrame.new(-9463, 9, 5930);
+
 _G._SailSeaActive = false;
 _G._SailSeaBoatRef = nil;
+_G._SailBoatTweening = false;
 
 AutoSailBoatToggle = SeaEventTab:AddToggle({
 	Title = "Sail Sea",
-	Desc = "Vai ate Tiki Outpost, compra o barco selecionado, monta nele e navega ate o mar escolhido.",
+	Desc = "Vai ao Castelo Assombrado, compra o barco selecionado, monta e navega ao mar escolhido.",
 	Value = _G.Settings.SeaEvent["Sail Boat"],
 	Callback = function(state)
 		_G.Settings.SeaEvent["Sail Boat"] = state;
@@ -14208,6 +14253,7 @@ AutoSailBoatToggle = SeaEventTab:AddToggle({
 		_G.SailBoats = state;
 		if not state then
 			_G._SailSeaBoatRef = nil;
+			_G._SailBoatTweening = false;
 		end;
 		(getgenv()).SaveSetting();
 	end
@@ -14226,7 +14272,11 @@ task.spawn(function()
 
 	while true do
 		task.wait(0.5);
-		if not _G._SailSeaActive then continue; end;
+		if not _G._SailSeaActive then
+			_G._SailBoatTweening = false;
+			continue;
+		end;
+
 		pcall(function()
 			local plr = game.Players.LocalPlayer;
 			local char = plr.Character;
@@ -14237,60 +14287,120 @@ task.spawn(function()
 
 			local selectedBoat = _G.Settings.SeaEvent["Selected Boat"] or "Guardian";
 			local plrName = plr.Name;
-			local zoneCF = _DANGER_ZONES[_G.DangerSc or "Lv 1"] or _DANGER_ZONES["Lv 1"];
 
-			-- ETAPA 1: Acha ou compra o barco
+			-- ============================================
+			-- ETAPA 1: Procura barco ja existente do player
+			-- ============================================
 			local boat = FindMyBoat(selectedBoat, plrName);
+
 			if not boat then
+				-- Para tween ativo antes de se mover
+				shouldTween = false;
+				_G.StopTween = false;
 				_G._SailSeaBoatRef = nil;
-				-- Tween ate o NPC de barco de Tiki Outpost
-				TweenPlayer(_BOAT_DEALER_CF);
+				_G._SailBoatTweening = false;
+				task.wait(0.15);
+
+				-- Tween ate NPC de barco no Castelo Assombrado
+				TweenPlayer(_HAUNTED_BOAT_NPC);
 				local t = 0;
-				repeat task.wait(0.25); t = t + 0.25;
-				until (hrp.Position - _BOAT_DEALER_CF.Position).Magnitude < 18 or t > 22;
+				repeat
+					task.wait(0.3); t = t + 0.3;
+				until (hrp.Position - _HAUNTED_BOAT_NPC.Position).Magnitude < 22 or t > 28;
+
+				-- Para o tween antes de comprar
+				shouldTween = false;
+				_G.StopTween = false;
 				task.wait(0.5);
+
 				-- Compra o barco
 				game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBoat", selectedBoat);
-				-- Aguarda o barco spawnar com o owner correto (ate 10s)
+
+				-- Aguarda spawnar com owner correto (ate 12s)
 				local sw = 0;
 				repeat
-					task.wait(0.3); sw = sw + 0.3;
+					task.wait(0.4); sw = sw + 0.4;
 					boat = FindMyBoat(selectedBoat, plrName);
-				until boat or sw > 10;
-				if not boat then return; end; -- nao conseguiu spawnar
+				until boat or sw > 12;
+				if not boat then return; end;
 			end;
+
 			_G._SailSeaBoatRef = boat;
 
-			-- ETAPA 2: Monta no barco usando MountPlayerToBoat (funcao nativa do script)
+			-- ============================================
+			-- ETAPA 2: Monta no barco
+			-- OBRIGATORIO: para shouldTween antes!
+			-- ============================================
 			if not hum.Sit then
-				-- Tenta montar ate 5 vezes
-				for i = 1, 5 do
-					local mounted = MountPlayerToBoat(boat);
-					if mounted or hum.Sit then break; end;
+				-- Para o loop de sync do tween para o HRP nao ser sobrescrito
+				shouldTween = false;
+				_G.StopTween = false;
+				task.wait(0.25);
+
+				local seat = boat:FindFirstChildWhichIsA("VehicleSeat");
+				if not seat then return; end;
+
+				-- Tenta montar 6 vezes com teleporte direto para o seat
+				for i = 1, 6 do
+					if hum.Sit then break; end;
+					hrp.CFrame = seat.CFrame * CFrame.new(0, 1.8, 0);
+					task.wait(0.3);
+					hrp.CFrame = seat.CFrame * CFrame.new(0, 0.5, 0);
+					task.wait(0.5);
+					if hum.Sit then break; end;
+					MountPlayerToBoat(boat);
 					task.wait(0.5);
 				end;
-				-- Se ainda nao sentou, retorna e tenta de novo no proximo loop
+
 				if not hum.Sit then return; end;
 			end;
 
-			-- ETAPA 3: Esta montado — navega para o mar selecionado
-			-- Verifica se o barco ainda existe
+			-- ============================================
+			-- ETAPA 3: Montado — navega para o mar
+			-- ============================================
 			if not boat.Parent then
 				_G._SailSeaBoatRef = nil;
+				_G._SailBoatTweening = false;
 				return;
 			end;
-			-- Se tiver inimigo perto, nao navega (deixa o farm atacar)
+			if not hum.Sit then
+				_G._SailBoatTweening = false;
+				return;
+			end;
+
+			-- Para se tiver inimigo perto
 			local hasEnemy = false;
 			pcall(function()
 				hasEnemy = CheckShark() or CheckTerrorShark() or CheckFishCrew()
 					or CheckPiranha() or CheckEnemiesBoat() or CheckSeaBeast()
 					or CheckPirateGrandBrigade() or CheckHauntedCrew() or CheckLeviathan();
 			end);
-			if hasEnemy then return; end;
-			-- Navega via TweenBoat ate a zona selecionada
+			if hasEnemy then
+				_G._SailBoatTweening = false;
+				return;
+			end;
+
+			-- Navega — so chama TweenBoat se nao tiver um ja rodando
+			local zoneCF = _DANGER_ZONES[_G.DangerSc or "Lv 1"] or _DANGER_ZONES["Lv 1"];
 			local distToZone = (hrp.Position - zoneCF.Position).Magnitude;
-			if distToZone > 400 then
-				TweenBoat(zoneCF);
+
+			if distToZone > 350 and not _G._SailBoatTweening then
+				_G._SailBoatTweening = true;
+				local boatTw = TweenBoat(zoneCF);
+				task.spawn(function()
+					while _G._SailSeaActive do
+						task.wait(0.5);
+						local c2 = plr.Character;
+						if not c2 then break; end;
+						local h2 = c2:FindFirstChild("HumanoidRootPart");
+						if not h2 then break; end;
+						if (h2.Position - zoneCF.Position).Magnitude <= 350 then break; end;
+						local hum2 = c2:FindFirstChildOfClass("Humanoid");
+						if not hum2 or not hum2.Sit then break; end;
+					end;
+					_G._SailBoatTweening = false;
+					pcall(function() if boatTw then boatTw:Stop(); end; end);
+				end);
 			end;
 		end);
 	end;
